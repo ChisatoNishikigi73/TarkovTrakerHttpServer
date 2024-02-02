@@ -1,0 +1,74 @@
+<!doctype html> <!-- HTML5 -->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Map</title>
+  <link rel="preload" href="%PUBLIC_URL%/fonts/bender.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'bender';
+      font-display: block;
+      font-style: normal;
+      font-weight: 400;
+      src: local('Bender Regular'),url('%PUBLIC_URL%/fonts/bender.woff2') format('woff2');
+    }
+
+    @font-face {
+      font-family: 'bender';
+      font-display: swap;
+      font-style: normal;
+      font-weight: 700;
+      src: local('Bender Bold'),url('%PUBLIC_URL%/fonts/bender-bold.woff2') format('woff2');
+    }
+
+    @font-face {
+      font-family: 'bender';
+      font-display: swap;
+      font-style: italic;
+      font-weight: 400;
+      src: local('Bender Italic'),url('%PUBLIC_URL%/fonts/bender-italic.woff2') format('woff2');
+    }
+
+    @font-face {
+      font-family: 'bender';
+      font-display: swap;
+      font-style: italic;
+      font-weight: 700;
+      src: local('Bender Bold Italic'),url('%PUBLIC_URL%/fonts/bender-bold-italic.woff2') format('woff2');
+    }
+  </style>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png">
+  <link rel="mask-icon" href="%PUBLIC_URL%/safari-pinned-tab.svg" color="#2d2d2f">
+  <meta name="apple-mobile-web-app-title" content="Tarkov.dev">
+  <meta name="application-name" content="Tarkov.dev">
+  <meta name="msapplication-TileColor" content="#2d2d2f">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta name="theme-color" content="#2d2d2f">
+
+</head>
+
+<body>
+  <div id="root">
+    <noscript>
+      <div style="display: flex; flex-direction: column; flex-wrap: nowrap; align-items: center;">
+        <a href="/">
+          <img alt="Tarkov.dev" width="300" height="48" loading="lazy" src="%PUBLIC_URL%/tarkov-dev-logo.svg">
+        </a>
+        <h1>tarkov.dev is an open source tool kit for Escape from Tarkov.</h1>
+        <h2>It is designed and maintained by the community to help you with quests, flea market trading, and improving your game!</h2>
+        <h2>The API is also freely available for you to build your own tools and services related to EFT.</h2>
+        <h3 style="color:red">Enable JavaScript and start using tarkov.dev right now!</h3>
+      </div>
+    </noscript>
+  </div>
+  <!-- Matomo Analytics -->
+  <script defer src="%PUBLIC_URL%/custom-user-stats.js"></script>
+</body>
+
+</html>
