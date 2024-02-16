@@ -919,19 +919,19 @@ function Map() {
             }
         }
 
-        // Add Player Position
+        function aada() {
+            // Add Player Position
         const urlParams = new URLSearchParams(window.location.search);
 
         //判断是否有参数
         if (urlParams.has('json')) {
-            const urlParamsData = urlParams.get('json');
-            //解析data
-            const player = JSON.parse(urlParamsData);
-
             const playerPosition = L.layerGroup();
+            const urlParamsData = urlParams.get('json');
+
             //计算四元数转换为方向
 
             //四元到三维向量
+            const forwardVector = [0, 0, -1]; // 前方向量(0N)
             function multiplyQuaternionAndVector(quaternion, vector) {
                 let x = vector[0], y = vector[1], z = vector[2];
                 let qx = quaternion[0], qy = quaternion[1], qz = quaternion[2], qw = quaternion[3];
@@ -962,49 +962,54 @@ function Map() {
                 return bearing;
             }
 
-            const a = player.data.playerPosition.position.a;
-            const b = player.data.playerPosition.position.b;
-            const c = player.data.playerPosition.position.c;
-            const d = player.data.playerPosition.position.d;
+            const json_ = JSON.parse(urlParamsData);
+            if (json_.self) {
+                addIcon(json_.selfjson, false);
+            }
 
-            let quaternion = [a, b, c, d];
-            let forwardVector = [0, 0, -1]; // 前方向量(0N)
-            let rotatedVector = multiplyQuaternionAndVector(quaternion, forwardVector);
-            let bearing = getBearing(rotatedVector);
-            const rotatedBearing = bearing + 180;
-            console.log('Rotated Vector:', rotatedVector);
-            console.log(`Bearing: ${bearing} degrees`);
+            for (let i = 0; i < json_.teammate; i++) {
+                addIcon(json_.teammatejson[i], true);
+            }
 
+            function addIcon(position_json, is_teammate) {
+                const a = position_json.position.a;
+                const b = position_json.position.b;
+                const c = position_json.position.c;
+                const d = position_json.position.d;
+                let quaternion = [a, b, c, d];
+                let rotatedVector = multiplyQuaternionAndVector(quaternion, forwardVector);
+                let bearing = getBearing(rotatedVector);
+                const rotatedBearing = bearing + 180;
+                console.log('Rotated Vector:', rotatedVector);
+                console.log(`Bearing: ${bearing} degrees`);
 
+                const icon = is_teammate ? "teammate_position" : "player_position";
 
+                const lockIcon = L.divIcon({
+                    className: 'spawn-icon',
+                    // html: `<img src="${process.env.PUBLIC_URL}/maps/interactive/spawn_pmc.png"/><span class="extract-name pmc">${player.name}</span>`,
+                    //设置旋转
+                    html: `<img src="${process.env.PUBLIC_URL}/maps/interactive/${icon}.png" style="transform: rotate(${rotatedBearing}deg);"/><span class="extract-name pmc">${position_json.name}</span>`,
+                    iconAnchor: [12, 12]
+                });
 
-
-            const lockIcon = L.divIcon({
-                className: 'spawn-icon',
-                // html: `<img src="${process.env.PUBLIC_URL}/maps/interactive/spawn_pmc.png"/><span class="extract-name pmc">${player.data.playerPosition.name}</span>`,
-                //设置旋转
-                html: `<img src="${process.env.PUBLIC_URL}/maps/interactive/spawn_pmc.png" style="transform: rotate(${rotatedBearing}deg);"/><span class="extract-name pmc">${player.data.playerPosition.name}</span>`,
-                iconAnchor: [12, 12]
-            });
-
-            const lockMarker = L.marker(pos(player.data.playerPosition.position), {
-                icon: lockIcon,
-                position: player.data.playerPosition.position,
-                title: player.data.playerPosition.name,
-            });
-
-            const popupContent = L.DomUtil.create('div');
-            const lockTypeNode = L.DomUtil.create('div', undefined, popupContent);
-            lockTypeNode.innerHTML = `<strong>${player.data.playerPosition.name}<br/>时间：${player.data.playerPosition.date_time}<br/>游戏时间：${player.data.playerPosition.time_n}</strong>`;
-
-            lockMarker.bindPopup(L.popup().setContent(popupContent));
-            lockMarker.on('add', checkMarkerForActiveLayers);
-            lockMarker.on('click', activateMarkerLayer);
-            lockMarker.addTo(playerPosition);
-            // if (Object.keys(playerPosition._layers).length > 0) {
-            map.addLayer(playerPosition, player.data.playerPosition.name, 'playerPositions');
-            // }
+                const positionMarker = L.marker(pos(position_json.position), {
+                    icon: lockIcon,
+                    position: position_json.position,
+                    title: position_json.name,
+                });
+                const popupContent = L.DomUtil.create('div');
+                const lockTypeNode = L.DomUtil.create('div', undefined, popupContent);
+                lockTypeNode.innerHTML = `<strong>${position_json.name}<br/>时间：${position_json.date_time}<br/>游戏时间：${position_json.time_n}</strong>`;
+                positionMarker.bindPopup(L.popup().setContent(popupContent));
+                positionMarker.on('add', checkMarkerForActiveLayers);
+                positionMarker.on('click', activateMarkerLayer);
+                positionMarker.addTo(playerPosition);
+                map.addLayer(playerPosition, position_json.name, 'playerPositions');
+            }
         }
+        }
+        aada();
 
 
 

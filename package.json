@@ -15,7 +15,7 @@
     "test": "react-scripts test --env=jsdom",
     "prettier": "prettier --write \"src/**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\"",
     "eject": "react-scripts eject",
-    "prebuildo": "node scripts/update-props.mjs && node scripts/cache-api-data.mjs && node scripts/get-version.mjs && node scripts/get-contributors.mjs && node scripts/build-sitemap.mjs && node scripts/generate-thumbnails.mjs",
+    "prebuildo": "node scripts/update-props.mjs && node scripts/cache-api-data.mjs && node scripts/build-sitemap.mjs && node scripts/generate-thumbnails.mjs",
     "prebuild": "node scripts/build-sitemap.mjs && node scripts/generate-thumbnails.mjs",
     "postbuild": "node scripts/build-redirects.mjs && node scripts/critical.mjs",
     "stage": "npx rimraf build && npm run build && npm run preview",

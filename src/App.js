@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
-import React, { useEffect, useCallback, Suspense } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import React, { useEffect, useCallback, Suspense, useState } from 'react';
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import CookieConsent from "react-cookie-consent";
@@ -26,14 +26,13 @@ import supportedLanguages from './data/supported-languages.json';
 
 import Menu from './components/menu/index.js';
 import Footer from './components/footer/index.js';
-
 const Map = React.lazy(() => import('./pages/map/index.js'));
 const ErrorPage = React.lazy(() => import('./pages/error-page/index.js'));
 const Debug = React.lazy(() => import('./components/Debug.jsx'));
 
 
 
-const socketServer = `ws://127.0.0.1:8080`;
+const socketServer = `ws://socket.tarkov.lycorecocafe.com`;
 
 let socket = false;
 let tarkovTrackerProgressInterval = false;
@@ -109,7 +108,6 @@ function App() {
             tarkovTrackerProgressInterval = false;
         };
     }, [progressStatus, dispatch, tarkovTrackerAPIKey, useTarkovTracker]);
-
     useEffect(() => {
         const handleDisplayMessage = (rawMessage) => {
             const message = JSON.parse(rawMessage.data);
@@ -124,19 +122,64 @@ function App() {
             // }
 
             if (message.data.type === 'playerPosition') {
-                //读取路径
+                // 构造
+                let json_;
+                const urlParams = new URLSearchParams(window.location.search);
+                if (!urlParams.has('json')) {
+                    json_ = {
+                            "self": false,
+                            "teammate": 0,
+                            "selfjson": {},
+                            "teammatejson": []
+                        };
+
+                }
+                else {
+                    const urlParamsData = urlParams.get('json');
+                    json_ = JSON.parse(urlParamsData);
+                }
+
+
+                //如果是本人
+                if (!message.data.is_teammate) {
+                    json_.self = true;
+                    json_.selfjson = message.data.playerPosition;
+                }
+                else {
+                    if(json_.teammatejson === undefined) {
+                        json_.teammatejson = []
+                    }
+                    //寻找是否已经存在相同的名字
+                    let isExist = false;
+                    for (let i = 0; i < json_.teammatejson.length; i++) {
+                        if (json_.teammatejson[i].name === message.data.playerPosition.name) {
+                            json_.teammatejson[i] = message.data.playerPosition;
+                            isExist = true;
+                        }
+                    }
+                    if (!isExist) {
+                        json_.teammate++
+                        json_.teammatejson.push(message.data.playerPosition);
+                    }
+
+                }
+                console.log(json_)
+                const json = JSON.stringify(json_);
+                console.log(json)
                 const currentPath = window.location.pathname;
-                console.log(currentPath)
-                //转换message为字符串
-
-                const json = JSON.stringify(message);
-                navigate(`/map`);
-
-                // 一秒后跳
+                navigate('/map')
+                //等待3秒
                 setTimeout(() => {
                     navigate(`${currentPath}?json=${json}`);
-                }, 100)
+                },100)
+
+
                 return false;
+
+                // const urlParams = new URLSearchParams(window.location.search);
+                //
+                // const urlParamsData = urlParams.get('json');
+                // const json_old = JSON.parse(urlParamsData);
             }
 
             navigate(`/${message.data.type}/${message.data.value}`);
